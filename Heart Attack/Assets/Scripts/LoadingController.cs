@@ -61,7 +61,8 @@ public class LoadingController : MonoBehaviour
 		// Start each item as invisible and setup fading to begin with each new frame update
 		_invisible = new Color (1.0f, 1.0f, 1.0f, 0.0f);
 		_visible = new Color (1.0f, 1.0f, 1.0f, 1.0f);
-		logoImage.color = quoteText.color = authorText.color = new Color (1.0f, 1.0f, 1.0f, 0.0f);
+		quoteText.color = authorText.color = _invisible;
+		logoImage.color = _visible;
 		StartCoroutine (WaitForFadeIn ());
 		
 	}
@@ -120,7 +121,7 @@ public class LoadingController : MonoBehaviour
 		if (_startFadeIn && !_fadedIn) {
 			float timeStep = (Time.time - _startTime) / fadeDuration;
 			Color fadingColor = new Color (1.0f, 1.0f, 1.0f, Mathf.SmoothStep (0.0f, 1.0f, timeStep));
-			logoImage.color = quoteText.color = authorText.color = fadingColor;
+			quoteText.color = authorText.color = fadingColor;
 			if (fadingColor == _visible) {
 				_fadedIn = true;
 				StartCoroutine (WaitForFadeOut ());
