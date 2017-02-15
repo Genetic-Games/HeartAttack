@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LoadingController : MonoBehaviour
 {
@@ -22,14 +23,18 @@ public class LoadingController : MonoBehaviour
 
 	// Image and text fade variables
 	public float fadeDuration = 3.0f;
-	public float waitDuration = 3.0f;
-	private Color _invisible;
-	private Color _visible;
+	public float waitDuration = 2.0f;
+	private Color _invisible = new Color (1.0f, 1.0f, 1.0f, 0.0f);
+	private Color _visible = new Color (1.0f, 1.0f, 1.0f, 1.0f);
 	private bool _startFadeIn = false;
 	private bool _startFadeOut = false;
 	private bool _fadedIn = false;
 	private bool _fadedOut = false;
+	private bool _waitForSceneChange = false;
+	private bool _loadScene = false;
 	private float _startTime;
+
+	// @TODO Add audio for each quotation as applicable and for charging of paddles and "CLEAR!" on scene transition
 
 	// Initialize quotation and author pair to use and begin fade-in sequence
 	void Start ()
@@ -37,6 +42,7 @@ public class LoadingController : MonoBehaviour
 		// Populate and check that all variables are valid and accounted for
 		this.PopulateQuotations ();
 		this.PopulateAuthors ();
+		this.NewGameOverride ();
 		Debug.Assert (_quotations.Count == _authors.Count);
 		Debug.Assert (quoteText != null);
 		Debug.Assert (authorText != null);
@@ -58,13 +64,20 @@ public class LoadingController : MonoBehaviour
 		quoteText.text = string.Concat ("\"", _selectedQuotation, "\"");
 		authorText.text = string.Concat ("~ ", _selectedAuthor);
 
-		// Start each item as invisible and setup fading to begin with each new frame update
-		_invisible = new Color (1.0f, 1.0f, 1.0f, 0.0f);
-		_visible = new Color (1.0f, 1.0f, 1.0f, 1.0f);
+		// Start each text item as invisible and setup fading to begin with each new frame update (do not fade in logo, it should already be visible)
 		quoteText.color = authorText.color = _invisible;
 		logoImage.color = _visible;
 		StartCoroutine (WaitForFadeIn ());
 		
+	}
+
+	// Always show the first quotation when a new game is started
+	private void NewGameOverride ()
+	{
+		if (PlayerPrefs.HasKey ("Level") && PlayerPrefs.GetInt ("Level") > 0) {
+			this.forceQuotation = true;
+			this.forceQuotationIndex = 0;
+		}
 	}
 
 	// Populate all the quotations to choose from
@@ -76,7 +89,7 @@ public class LoadingController : MonoBehaviour
 		_quotations.Add ("The daily effort comes from no deliberate intention or program, but straight from the heart.");
 		_quotations.Add (" 'Tis better to have loved and lost \n than never to have loved at all.");
 		_quotations.Add ("The course of true love \n never did run smooth.");
-		_quotations.Add ("A warrior can change his metal, but not his heart.");
+		_quotations.Add ("A warrior can change his metal, \n but not his heart.");
 		_quotations.Add ("Returning violence for violence multiplies violence, adding deeper darkness to a night already devoid of stars.");
 		_quotations.Add ("If you can do no good, \n at least do no harm.");
 		_quotations.Add ("You have only to persevere to save yourselves, and to save all those who rely upon you.");
@@ -99,6 +112,7 @@ public class LoadingController : MonoBehaviour
 		_authors.Add ("Mahatma Gandhi");
 	}
 
+	// Wait some duration of time before beginning to fade in
 	IEnumerator WaitForFadeIn ()
 	{
 		yield return new WaitForSeconds (waitDuration);
@@ -114,10 +128,18 @@ public class LoadingController : MonoBehaviour
 		_startTime = Time.time;
 	}
 
-	// Update is called every frame, controlling the fading of the text and images on the screen
+	// After fading out, wait some duration until the scene can be changed
+	IEnumerator WaitForChangeScene ()
+	{
+		yield return new WaitForSeconds (waitDuration);
+		_loadScene = true;
+	}
+
+	// Update is called every frame, controlling the fading of the text and images on the screen as well as scene change
 	void Update ()
 	{
 
+		// Fade in after waiting
 		if (_startFadeIn && !_fadedIn) {
 			float timeStep = (Time.time - _startTime) / fadeDuration;
 			Color fadingColor = new Color (1.0f, 1.0f, 1.0f, Mathf.SmoothStep (0.0f, 1.0f, timeStep));
@@ -128,6 +150,7 @@ public class LoadingController : MonoBehaviour
 			}
 		}
 
+		// Fade out after fade in and waiting
 		if (_fadedIn && _startFadeOut && !_fadedOut) {
 			float timeStep = (Time.time - _startTime) / fadeDuration;
 			Color fadingColor = new Color (1.0f, 1.0f, 1.0f, Mathf.SmoothStep (1.0f, 0.0f, timeStep));
@@ -135,6 +158,16 @@ public class LoadingController : MonoBehaviour
 			if (fadingColor == _invisible) {
 				_fadedOut = true;
 			}
+		}
+
+		// Wait once faded out to change scenes
+		if (_fadedOut && !_waitForSceneChange) {
+			_waitForSceneChange = true;
+			StartCoroutine (WaitForChangeScene ()); // @TODO would be a good place to put in heart attack and defibrillator audio
+		}
+
+		if (_waitForSceneChange && _loadScene) {
+			SceneManager.LoadScene ("Game"); // @TODO will have to change this based on PlayerPrefs once there are > 1 game scenes
 		}
 	}
 
