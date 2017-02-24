@@ -17,7 +17,7 @@ public class MainMenuController : MonoBehaviour
 	// Overwrite the player's previous game status with a new game
 	public void NewGame ()
 	{
-		PlayerPrefs.SetInt ("Level", 0);
+		PlayerPrefs.SetInt ("Level", 1);
 	}
 
 	// Decide whether or not to display the option for continue based on if is already in the middle of a game
