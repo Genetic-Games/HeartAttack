@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
 	{
 		if (this.playerTransform == null) {
 			Debug.Break ();
-			throw new UnityException ("Player object not found by camera. Aborting.");
+			throw new MissingReferenceException ("Player object not found by camera. Aborting.");
 		}
 
 		this._cameraStartingPosition = this.GetComponent<Transform> ().position;

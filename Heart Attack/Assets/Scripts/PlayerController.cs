@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour
 		_rbody = GetComponent<Rigidbody> ();
 
 		if (_rbody == null) {
-			throw new UnityException ("Player rigidbody not found. Aborting.");
 			Debug.Break ();
+			throw new MissingReferenceException ("Player rigidbody not found. Aborting.");
 		}
 	}
 	
