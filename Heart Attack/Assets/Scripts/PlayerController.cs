@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,24 +6,24 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody _rbody;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
-		_rbody = GetComponent<Rigidbody> ();
+		_rbody = GetComponent<Rigidbody>();
 
 		if (_rbody == null) {
-			Debug.Break ();
-			throw new MissingReferenceException ("Player rigidbody not found. Aborting.");
+			Debug.Break();
+			throw new MissingReferenceException("Player rigidbody not found. Aborting.");
 		}
 	}
 	
 	// FixedUpdate is called once per frame at the end of processing all other calculations
-	void FixedUpdate ()
+	void FixedUpdate()
 	{
 
 		// Movement only occurs on the X and Z axes, since the Y-axis is vertical (no player movement straight up)
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
+		float moveHorizontal = Input.GetAxis("Horizontal");
+		float moveVertical = Input.GetAxis("Vertical");
 
-		_rbody.AddForce (speed * moveHorizontal, 0.0f, speed * moveVertical, ForceMode.VelocityChange);
+		_rbody.AddForce(speed * moveHorizontal, 0.0f, speed * moveVertical, ForceMode.VelocityChange);
 	}
 }
