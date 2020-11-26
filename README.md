@@ -6,7 +6,7 @@ When his old friend Bean (a kidney) shows up on his door step in distress, Bean 
 
 Nevertheless, this down-trodden heart is the last hope to rescue the kidney's twin sister, Rena L. (also a kidney).  
 
-With a cause, and a friend by his side, it's finally this heart's turn to fight back, using any and all weapons at his disposal.
+With a cause to fight for, and a friend by his side, it's finally this heart's time to fight back, using any and all weapons at his disposal.
 
 Battling a variety of enemies from cholesterol to butter, from anxiety to mean ex-girlfriends, and even himself, the heart has to do everything in his power to save his friends.
 
